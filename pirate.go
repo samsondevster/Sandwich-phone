@@ -25,3 +25,12 @@ func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
 					return "TODO"
 				},
 			),
+
+func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
+	return func(kvA, kvB kv.Pair) string {
+		switch {
+  		case bytes.Equal(kvA.Key[:1], types.KeyPrefix(types.GoogleInAppPurchaseOrderKey)):
+			var giapA, giapB types.GoogleInAppPurchaseOrder
+			cdc.MustUnmarshal(kvA.Value, &giapA)
+			cdc.MustUnmarshal(kvB.Value, &giapB)
+			return fmt.Sprintf("%v\n%v", giapA, giapB)}
